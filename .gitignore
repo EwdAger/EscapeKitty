@@ -1,0 +1,16 @@
+# Created by .ignore support plugin (hsz.mobi)
+将删除 .gitignore
+将删除 .idea/
+将删除 EscapeKitty/__pycache__/
+将删除 Kitty/__pycache__/
+将删除 Kitty/migrations/__pycache__/
+将删除 Nerds/Nerds/__pycache__/
+将删除 Nerds/Nerds/spiders/__pycache__/
+将删除 Nerds/Nerds/utils/__pycache__/
+将删除 Nerds/Nerds/utils/chromedriver
+将删除 Nerds/Nerds/utils/phantomjs/
+将删除 Nerds/ghostdriver.log
+将删除 db.sqlite3
+将删除 templates/
+将删除 venv/
+将删除 "\351\207\215\350\246\201\344\277\241\346\201\257.txt"

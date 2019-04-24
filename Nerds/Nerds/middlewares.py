@@ -132,3 +132,5 @@ class JSPageMiddleware(object):
         print("访问:{0}".format(request.url))
 
         return HtmlResponse(url=spider.browser.current_url, body=spider.browser.page_source, encoding="utf-8")
+
+
