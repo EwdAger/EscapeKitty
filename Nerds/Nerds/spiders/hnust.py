@@ -18,19 +18,19 @@ class HnustSpider(scrapy.Spider):
 
 
     def start_requests(self):
-        # 爬取前两万条岗位信息
-        for i in range(2):
-            yield scrapy.Request("http://jy.hnust.edu.cn/module/getjobs?start_page=1&type_id=-1&k=&is_practice={0}&count=20000&start=1".format(i),
-                                 callback=self.handle_jobs)
-        # 爬取宣讲会信息
+        # # 爬取前两万条岗位信息
+        # for i in range(2):
+        #     yield scrapy.Request("http://jy.hnust.edu.cn/module/getjobs?start_page=1&type_id=-1&k=&is_practice={0}&count=20000&start=1".format(i),
+        #                          callback=self.handle_jobs)
+        # # 爬取宣讲会信息
         for i in ["inner", "outer"]:
             yield scrapy.Request("http://jy.hnust.edu.cn/module/getcareers?start_page=1&k=&type={0}&day=&count=10000&start=1".format(i),
                                  callback=self.handle_careers)
         # 爬取双选会信息
-        yield scrapy.Request("http://jy.hnust.edu.cn/module/getjobfairs?start_page=1&keyword=&count=300&start=1", callback=self.handle_jobfairs)
-        for i in ["blacklist", "whitelist"]:
-            yield scrapy.Request("https://github.com/996icu/996.ICU/tree/master/{0}".format(i), meta={"type": i},
-                                 callback=self.get_996ICU)
+        # yield scrapy.Request("http://jy.hnust.edu.cn/module/getjobfairs?start_page=1&keyword=&count=300&start=1", callback=self.handle_jobfairs)
+        # for i in ["blacklist", "whitelist"]:
+        #     yield scrapy.Request("https://github.com/996icu/996.ICU/tree/master/{0}".format(i), meta={"type": i},
+        #                          callback=self.get_996ICU)
 
     def handle_jobs(self, response):
         jobs = json.loads(response.body_as_unicode())["data"]

@@ -74,7 +74,8 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    # 'Nerds.pipelines.NerdsPipeline': 300,
-    'Nerds.pipelines.MysqlTwistedPipline': 300,
+    'Nerds.pipelines.MysqlTwistedPipeline': 300,
+    'Nerds.pipelines.ElasticsearchPipeline': 299,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

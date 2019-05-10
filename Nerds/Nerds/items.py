@@ -11,6 +11,10 @@ from scrapy.loader.processors import MapCompose, TakeFirst, Join
 from datetime import datetime
 from settings import SQL_DATETIME_FORMAT
 from Nerds.utils.common import get_md5
+from models.es_types import JobsType, CareersType, JobfairsType
+
+from elasticsearch_dsl.connections import connections
+es = connections.create_connection(JobsType._doc_type.using)
 
 
 def trans_datetime(value):
@@ -45,6 +49,24 @@ def is_blacklist(value):
     else:
         return 0
 
+
+def gen_suggests(index, info_tuple):
+    #根据字符串生成搜索建议数组
+    used_words = set()
+    suggests = []
+    for text, weight in info_tuple:
+        if text:
+            #调用es的analyze接口分析字符串
+            words = es.indices.analyze(index=index, analyzer="ik_max_word", params={'filter':["lowercase"]}, body=text)
+            anylyzed_words = set([r["token"] for r in words["tokens"] if len(r["token"])>1])
+            new_words = anylyzed_words - used_words
+        else:
+            new_words = set()
+
+        if new_words:
+            suggests.append({"input":list(new_words), "weight": weight})
+
+    return suggests
 
 class NerdsItem(scrapy.Item):
     # define the fields for your item here like:
@@ -99,6 +121,29 @@ class HnustJobModelItem(scrapy.Item):
         )
         return insert_sql, params
 
+    def save_to_es(self):
+        jobs = JobsType()
+        jobs.job_name = self['job_name']
+        jobs.url = self['url']
+        jobs.publish_id = self['publish_id']
+        jobs.salary = self['salary']
+        jobs.city_name = self['city_name']
+        jobs.about_major = self['about_major']
+        jobs.degree_require = self['degree_require']
+        jobs.company_name = self['company_name']
+        jobs.tianyan_company_url = self['tianyan_company_url']
+        jobs.publish_time = self['publish_time']
+        jobs.end_time = self['end_time']
+        jobs.scale = self['scale']
+        jobs.industry_category = self['industry_category']
+        jobs.keywords = self['keywords']
+        jobs.is_practice = self['is_practice']
+
+        jobs.suggest = gen_suggests(JobsType._doc_type.index, ((jobs.job_name, 10), (jobs.city_name, 7),
+                                                               (jobs.keywords, 6), (jobs.industry_category, 5)))
+
+        jobs.save()
+
 
 class HnustCareersItemLoader(ItemLoader):
     default_output_processor = TakeFirst()
@@ -141,6 +186,26 @@ class HnustCareersItem(scrapy.Item):
 
         return insert_sql, params
 
+    def save_to_es(self):
+        careers = CareersType()
+        careers.url = self["url"]
+        careers.tianyan_company_url = self["tianyan_company_url"]
+        careers.company_name = self["company_name"]
+        careers.professionals = self["professionals"]
+        careers.company_property = self["company_property"]
+        careers.industry_category = self["industry_category"]
+        careers.city_name = self["city_name"]
+        careers.meet_name = self["meet_name"]
+        careers.school_name = self["school_name"]
+        careers.meet_time = self["meet_time"]
+        careers.address = self["address"]
+
+        careers.suggest = gen_suggests(CareersType._doc_type.index, ((careers.professionals, 10),
+                                                                     (careers.company_property, 7),
+                                                                     (careers.industry_category, 6),
+                                                                     (careers.city_name, 5)))
+        careers.save()
+
 
 class HnustJobfairsItemLoader(ItemLoader):
     default_output_processor = TakeFirst()
@@ -175,6 +240,19 @@ class HnustJobfairsItem(scrapy.Item):
         )
 
         return insert_sql, params
+
+    def save_to_es(self):
+        jobfairs = JobfairsType()
+        jobfairs.url = self['url']
+        jobfairs.title = self['title']
+        jobfairs.school_name = self['school_name']
+        jobfairs.address = self['address']
+        jobfairs.meet_time = self['meet_time']
+        # 参与企业数
+        jobfairs.plan_c_count = self['plan_c_count']
+
+        jobfairs.suggest = gen_suggests(JobfairsType._doc_type.index, ((jobfairs.school_name, 10), (jobfairs.address, 5)))
+        jobfairs.save()
 
 
 class ICUItemLoader(ItemLoader):
