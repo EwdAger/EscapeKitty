@@ -100,5 +100,6 @@ html{*overflow:auto;}
 .inputArea .dataList{display:none;position:absolute;left:0;top:42px;*top:43px;width:550px;padding:5px 0;background:#fff;border:1px solid #bfbfbf;border-top:none;}
 .inputArea .dataList li{padding:2px 15px;font-size:14px;}
 .inputArea .dataList li:hover{background:#f0f0f0;color:#0080cc;font-weight:bold;}
-
+.major {color: coral;font-size: 15px}
+.detail {font-size: 15px}
 

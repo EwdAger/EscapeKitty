@@ -18,23 +18,29 @@ class HnustSpider(scrapy.Spider):
 
 
     def start_requests(self):
-        # # 爬取前两万条岗位信息
-        # for i in range(2):
-        #     yield scrapy.Request("http://jy.hnust.edu.cn/module/getjobs?start_page=1&type_id=-1&k=&is_practice={0}&count=20000&start=1".format(i),
-        #                          callback=self.handle_jobs)
-        # # 爬取宣讲会信息
+        # 爬取前两万条岗位信息
+        for i in range(2):
+            yield scrapy.Request("http://jy.hnust.edu.cn/module/getjobs?start_page=1&type_id=-1&k=&is_practice={0}&count=20000&start=1".format(i),
+                                 callback=self.handle_jobs)
+        # 爬取宣讲会信息
         for i in ["inner", "outer"]:
             yield scrapy.Request("http://jy.hnust.edu.cn/module/getcareers?start_page=1&k=&type={0}&day=&count=10000&start=1".format(i),
                                  callback=self.handle_careers)
         # 爬取双选会信息
-        # yield scrapy.Request("http://jy.hnust.edu.cn/module/getjobfairs?start_page=1&keyword=&count=300&start=1", callback=self.handle_jobfairs)
-        # for i in ["blacklist", "whitelist"]:
-        #     yield scrapy.Request("https://github.com/996icu/996.ICU/tree/master/{0}".format(i), meta={"type": i},
-        #                          callback=self.get_996ICU)
+        yield scrapy.Request("http://jy.hnust.edu.cn/module/getjobfairs?start_page=1&keyword=&count=300&start=1", callback=self.handle_jobfairs)
+        for i in ["blacklist", "whitelist"]:
+            yield scrapy.Request("https://github.com/996icu/996.ICU/tree/master/{0}".format(i), meta={"type": i},
+                                 callback=self.get_996ICU)
 
     def handle_jobs(self, response):
         jobs = json.loads(response.body_as_unicode())["data"]
         for job in jobs:
+            # 不爬取过期信息
+            # end_time = job["end_time"]
+            # end_time = datetime.strptime(end_time, '%Y-%m-%d')
+            # now = datetime.now()
+            # if end_time < now:
+            #     continue
             item_loader = HnustJobModelItemLoader(item=HnustJobModelItem())
             item_loader.add_value("job_name", job['job_name'])
             item_loader.add_value("url", "http://jy.hnust.edu.cn/detail/job?id={0}&menu_id=".format(job["publish_id"]))
@@ -58,6 +64,12 @@ class HnustSpider(scrapy.Spider):
     def handle_careers(self, response):
         careers = json.loads(response.body_as_unicode())["data"]
         for career in careers:
+            # 不爬取过期信息
+            # end_time = career["meet_time"]
+            # end_time = datetime.strptime(meet_time, '%Y-%m-%d')
+            # now = datetime.now()
+            # if end_time < now:
+            #     continue
             item_loader = HnustCareersItemLoader(item=HnustCareersItem())
             item_loader.add_value("career_talk_id", career["career_talk_id"])
             item_loader.add_value("url", "http://jy.hnust.edu.cn/detail/career?id="+career["career_talk_id"])
@@ -78,6 +90,12 @@ class HnustSpider(scrapy.Spider):
     def handle_jobfairs(self, response):
         jobfairs = json.loads(response.body_as_unicode())["data"]
         for jobfair in jobfairs:
+            # 不爬取过期信息
+            #     end_time = jobfair["meet_time"]
+            #     end_time = datetime.strptime(end_time, '%Y-%m-%d')
+            #     now = datetime.now()
+            #     if end_time < now:
+            #         continue
             item_loader = HnustJobfairsItemLoader(item=HnustJobfairsItem())
             item_loader.add_value("fair_id", jobfair["fair_id"])
             item_loader.add_value("url", "http://jy.hnust.edu.cn/detail/jobfair?id="+jobfair["fair_id"])

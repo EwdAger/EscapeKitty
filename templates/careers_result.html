@@ -1,0 +1,289 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load staticfiles %}
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>EscapeKitty</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/result.css' %}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="container">
+    <div id="hd" class="ue-clear">
+        <a href="/">
+            <div class="logo"></div>
+        </a>
+        <div class="inputArea">
+            <input type="text" class="searchInput" value="{{ key_words }}"/>
+            <input type="button" class="searchButton" onclick="add_search()"/>
+        </div>
+    </div>
+    <div class="nav">
+        <ul class="searchList">
+            <li class="searchItem" data-type="job">职位</li>
+            <li class="searchItem current" data-type="careers">宣讲会</li>
+            <li class="searchItem" data-type="jobfairs">双选会</li>
+        </ul>
+    </div>
+    <div id="bd" class="ue-clear">
+        <div id="main">
+            <div class="sideBar">
+
+                <div class="subfield">收录</div>
+                <ul class="subfieldContext">
+                    <li>
+                        <span class="name">在线招聘职位({{ info_nums.0 }})</span>
+                    </li>
+                    <li>
+                        <span class="name">宣讲会({{ info_nums.1 }})</span>
+                    </li>
+                    <li>
+                        <span class="name">双选会({{ info_nums.2 }})</span>
+                    </li>
+                    <li class="more">
+                        <a href="javascript:;">
+                            <span class="text">更多</span>
+                            <i class="moreIcon"></i>
+                        </a>
+                    </li>
+                </ul>
+
+
+                <div class="sideBarShowHide">
+                    <a href="javascript:;" class="icon"></a>
+                </div>
+            </div>
+            <div class="resultArea">
+                <p class="resultTotal">
+                    <span class="info">找到约&nbsp;<span class="totalResult">{{ total_nums }}</span>&nbsp;条结果(用时<span
+                            class="time">{{ last_seconds }}</span>秒)，共约<span
+                            class="totalPage">{{ page_nums }}</span>页</span>
+                </p>
+                <div class="resultList">
+                    {% for hit in all_hits %}
+                        <div class="resultItem">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="itemHead">
+                                        <a href="{{ hit.url }}" target="_blank" class="title">
+                                            {% autoescape off %}{{ hit.meet_name }}{% endautoescape %}</a>
+                                        <span class="divsion">-</span>
+                                        <span class="dependValue">
+                                    <span>相关度得分：</span>
+                                    <span class="value">{{ hit.score }}</span>
+                                </span>
+                                    </div>
+                                    <div class="itemBody">
+                                        <label class="major">专业限制:</label>
+                                        {% autoescape off %}{{ hit.professionals}}{% endautoescape %}
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div>
+                                        <strong>公司名:
+                                            <a href="{{ hit.tianyan_company_url }}" target="_blank">
+                                                {% autoescape off %}{{ hit.company_name }}{% endautoescape %}</a>
+                                        </strong>
+                                    </div>
+                                    <div>
+                                        公司性质: {{ hit.company_property }}
+                                    </div>
+                                    <div>
+                                        所属行业: {{ hit.industry_category }}
+                                    </div>
+                                <div class="btn btn-primary" > {{ hit.school_name }} {{ hit.address }} {{ hit.meet_time }}</div>
+                                <div class="{{ hit.css }}">{{ hit.c_value }}</div>
+                                </div>
+
+                            </div>
+                            <div class="itemFoot">
+                                <span class="info">
+                                    <span class="value">工作地点： {{ hit.city_name }}</span>
+                                </span>
+                                <span class="info">
+                                    <label>截止时间：</label>
+                                    <span class="value">{{ hit.meet_time }}</span>
+                                </span>
+                            </div>
+                        </div>
+
+
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- 分页 -->
+            <div class="pagination ue-clear"></div>
+            <!-- 相关搜索 -->
+
+
+        </div>
+{#        <div class="historyArea">#}
+{#            <div class="mySearch">#}
+{#                <h6>我的搜索</h6>#}
+{#                <ul class="historyList">#}
+{##}
+{#                </ul>#}
+{#            </div>#}
+{#        </div>#}
+    </div><!-- End of main -->
+</div><!--End of bd-->
+</div>
+
+<div id="foot">Copyright &copy;projectsedu.com 版权所有 E-mail:admin@projectsedu.com</div>
+</body>
+<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/global.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/pagination.js' %}"></script>
+<script type="text/javascript">
+    var search_url = "{% url 'search' %}"
+    $('.searchList').on('click', '.searchItem', function () {
+        $('.searchList .searchItem').removeClass('current');
+        $(this).addClass('current');
+    });
+    $.each($('.subfieldContext'), function (i, item) {
+        $(this).find('li:gt(2)').hide().end().find('li:last').show();
+    });
+
+    function removeByValue(arr, val) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == val) {
+                arr.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    $('.subfieldContext .more').click(function (e) {
+        var $more = $(this).parent('.subfieldContext').find('.more');
+        if ($more.hasClass('show')) {
+
+            if ($(this).hasClass('define')) {
+                $(this).parent('.subfieldContext').find('.more').removeClass('show').find('.text').text('自定义');
+            } else {
+                $(this).parent('.subfieldContext').find('.more').removeClass('show').find('.text').text('更多');
+            }
+            $(this).parent('.subfieldContext').find('li:gt(2)').hide().end().find('li:last').show();
+        } else {
+            $(this).parent('.subfieldContext').find('.more').addClass('show').find('.text').text('收起');
+            $(this).parent('.subfieldContext').find('li:gt(2)').show();
+        }
+
+    });
+
+    $('.sideBarShowHide a').click(function (e) {
+        if ($('#main').hasClass('sideBarHide')) {
+            $('#main').removeClass('sideBarHide');
+            $('#container').removeClass('sideBarHide');
+        } else {
+            $('#main').addClass('sideBarHide');
+            $('#container').addClass('sideBarHide');
+        }
+
+    });
+    var key_words = "{{ key_words }}"
+    //分页
+    $(".pagination").pagination({{ total_nums }}, {
+        current_page:{{ page|add:'-1' }}, //当前页码
+        items_per_page: 10,
+        display_msg: true,
+        callback: pageselectCallback
+    });
+
+    function pageselectCallback(page_id, jq) {
+        window.location.href = search_url + '?q=' + key_words + '&p=' + (page_id + 1) + "&s_type=" + $(".searchItem.current").attr('data-type')
+    }
+
+    setHeight();
+    $(window).resize(function () {
+        setHeight();
+    });
+
+    function setHeight() {
+        if ($('#container').outerHeight() < $(window).height()) {
+            $('#container').height($(window).height() - 33);
+        }
+    }
+</script>
+<script type="text/javascript">
+    // 联想下拉显示隐藏
+    $('.searchInput').on('focus', function () {
+        $('.dataList').show()
+    });
+    // 联想下拉点击
+    $('.dataList').on('click', 'li', function () {
+        var text = $(this).text();
+        $('.searchInput').val(text);
+        $('.dataList').hide()
+    });
+    hideElement($('.dataList'), $('.searchInput'));
+</script>
+<script>
+    var searchArr;
+    //定义一个search的，判断浏览器有无数据存储（搜索历史）
+    if (localStorage.search) {
+        //如果有，转换成 数组的形式存放到searchArr的数组里（localStorage以字符串的形式存储，所以要把它转换成数组的形式）
+        searchArr = localStorage.search.split(",")
+    } else {
+        //如果没有，则定义searchArr为一个空的数组
+        searchArr = [];
+    }
+    //把存储的数据显示出来作为搜索历史
+    MapSearchArr();
+
+    function add_search() {
+        var val = $(".searchInput").val();
+        if (val.length >= 2) {
+            //点击搜索按钮时，去重
+            KillRepeat(val);
+            //去重后把数组存储到浏览器localStorage
+            localStorage.search = searchArr;
+            //然后再把搜索内容显示出来
+            MapSearchArr();
+        }
+        window.location.href = search_url + '?q=' + val + "&s_type=" + $(".searchItem.current").attr('data-type')
+    }
+
+    function MapSearchArr() {
+        var tmpHtml = "";
+        var arrLen = 0
+        if (searchArr.length > 6) {
+            arrLen = 6
+        } else {
+            arrLen = searchArr.length
+        }
+        for (var i = 0; i < arrLen; i++) {
+            tmpHtml += '<li><a href="/search?q=' + searchArr[i] + '">' + searchArr[i] + '</a></li>'
+        }
+        $(".mySearch .historyList").append(tmpHtml);
+    }
+
+    //去重
+    function KillRepeat(val) {
+        var kill = 0;
+        for (var i = 0; i < searchArr.length; i++) {
+            if (val === searchArr[i]) {
+                kill++;
+            }
+        }
+        if (kill < 1) {
+            searchArr.unshift(val);
+        } else {
+            removeByValue(searchArr, val)
+            searchArr.unshift(val)
+        }
+    }
+</script>
+</html>
