@@ -16,10 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
-from Kitty.views import SearchSuggest, SearchView
+from Kitty.views import SearchSuggest, SearchView, AdminView, CrawlView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', AdminView.as_view(), name="admin"),
+    path('crawl/', CrawlView.as_view(), name="crawl"),
     path('', TemplateView.as_view(template_name="index.html"), name="index"),
     path('suggest/', SearchSuggest.as_view(), name="suggest"),
     path('search/', SearchView.as_view(), name="search")

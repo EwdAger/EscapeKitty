@@ -28,14 +28,14 @@
         </a>
         <div class="inputArea">
             <input type="text" class="searchInput" value="{{ key_words }}"/>
-            <input type="button" class="searchButton" onclick="add_search()"/>
+            <input type="button" class="btn btn-primary btn-lg" onclick="add_search()" value="搜索"/>
         </div>
     </div>
     <div class="nav">
         <ul class="searchList">
-            <li class="searchItem current" data-type="job">职位</li>
+            <li class="searchItem" data-type="job">职位</li>
             <li class="searchItem" data-type="careers">宣讲会</li>
-            <li class="searchItem" data-type="jobfairs">双选会</li>
+            <li class="searchItem current" data-type="jobfairs">双选会</li>
         </ul>
     </div>
     <div id="bd" class="ue-clear">
@@ -79,7 +79,8 @@
                                 <div class="col-md-4">
                                     <div class="itemHead">
                                         <a href="{{ hit.url }}" target="_blank" class="title">
-                                            {% autoescape off %}{{ hit.job_name }}{% endautoescape %}</a>
+                                            {% autoescape off %}{{ hit.title }}{% endautoescape %}</a>
+                                    <br>
                                         <span class="divsion">-</span>
                                         <span class="dependValue">
                                     <span>相关度得分：</span>
@@ -88,46 +89,25 @@
                                     </div>
                                     <div class="itemBody">
                                         <p class="detail">
-                                            <label class="major">关键字:</label>
-                                            {% autoescape off %}{{ hit.keywords }}{% endautoescape %}
+                                            <label class="major">地址:</label>
+                                            {% autoescape off %}{{ hit.address }}{% endautoescape %}
                                         </p>
-                                        <br>
-                                        <label class="major">专业限制:</label>
-                                        {% autoescape off %}{{ hit.about_major }}{% endautoescape %}
                                     </div>
                                 </div>
                                 <div class="col-md-8">
+                                        <div class="detail">组织单位:
+                                                {% autoescape off %}{{ hit.school_name }}{% endautoescape %}
+                                        </div>
                                     <div>
-                                        <strong>公司名:
-                                            <a href="{{ hit.tianyan_company_url }}" target="_blank">
-                                                {% autoescape off %}{{ hit.company_name }}{% endautoescape %}</a>
-                                        </strong>
+                                        预计参加公司数: {{ hit.plan_c_count }}
                                     </div>
-                                    <div>
-                                        公司规模: {{ hit.scale }}
-                                    </div>
-                                    <div>
-                                        所属行业: {{ hit.industry_category }}
-                                    </div>
-                                    <div class="text-warning">
-                                        此为 {{ is_practice }}
-                                    </div>
-                                <div class="btn btn-danger " >薪资 {{ hit.salary }}</div>
-                                <div class="{{ hit.css }}">{{ hit.c_value }}</div>
                                 </div>
 
                             </div>
                             <div class="itemFoot">
                                 <span class="info">
-                                    <span class="value">{{ hit.degree_require }}/{{ industry_category }}{{ hit.city_name }}</span>
-                                </span>
-                                <span class="info">
-                                    <label>发布时间：</label>
-                                    <span class="value">{{ hit.publish_time|cut:"T00:00:00" }}</span>
-                                </span>
-                                <span class="info">
-                                    <label>截止时间：</label>
-                                    <span class="value">{{ hit.end_time|cut:"T00:00:00" }}</span>
+                                    <label>时间：</label>
+                                    <span class="value">{{ hit.meet_time }}</span>
                                 </span>
                             </div>
                         </div>

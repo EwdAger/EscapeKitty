@@ -24,7 +24,7 @@ class HnustSpider(scrapy.Spider):
                                  callback=self.handle_jobs)
         # 爬取宣讲会信息
         for i in ["inner", "outer"]:
-            yield scrapy.Request("http://jy.hnust.edu.cn/module/getcareers?start_page=1&k=&type={0}&day=&count=10000&start=1".format(i),
+            yield scrapy.Request("http://jy.hnust.edu.cn/module/getcareers?start_page=1&k=&type={0}&day=&count=2000&start=1".format(i),
                                  callback=self.handle_careers)
         # 爬取双选会信息
         yield scrapy.Request("http://jy.hnust.edu.cn/module/getjobfairs?start_page=1&keyword=&count=300&start=1", callback=self.handle_jobfairs)

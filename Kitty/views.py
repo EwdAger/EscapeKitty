@@ -7,6 +7,7 @@ from elasticsearch import Elasticsearch
 from datetime import datetime
 import MySQLdb
 import MySQLdb.cursors
+from Nerds.main import run_spider
 
 db = MySQLdb.connect("localhost", "root", "33Miss77###", "hnjy", charset='utf8')
 client = Elasticsearch(hosts=["127.0.0.1"])
@@ -146,7 +147,65 @@ class SearchView(View):
                                                         "page_nums": page_nums, "last_seconds": last_seconds,
                                                         "info_nums": self.get_info_nums()})
         elif s_type == "jobfairs":
-            pass
+            response = client.search(
+                index="jobfairs",
+                body={
+                    "query": {
+                        "multi_match": {
+                            "query": key_words,
+                            "fields": ["title", "school_name", "address"]
+                        }
+                    },
+                    "from": (page - 1) * 10,
+                    "size": 10,
+                    "highlight": {
+                        "pre_tags": ['<span class="keyWord">'],
+                        "post_tags": ['</span>'],
+                        "fields": {
+                            "title": {},
+                            "school_name": {},
+                            "address": {},
+                        }
+                    }
+                }
+            )
+            end_time = datetime.now()
+            last_seconds = (end_time - start_time).total_seconds()
+            total_nums = response["hits"]["total"]
+            if (page % 10) > 0:
+                page_nums = int(total_nums / 10) + 1
+            else:
+                page_nums = int(total_nums / 10)
+            hit_list = []
+            for hit in response["hits"]["hits"]:
+                hit_dict = {}
+                if "title" in hit["highlight"]:
+                    hit_dict["title"] = "".join(hit["highlight"]["title"])
+                else:
+                    hit_dict["title"] = hit["_source"]["title"]
+
+                if "school_name" in hit["highlight"]:
+                    hit_dict["school_name"] = "".join(hit["highlight"]["school_name"])
+                else:
+                    hit_dict["school_name"] = hit["_source"]["school_name"]
+
+                if "address" in hit["highlight"]:
+                    hit_dict["address"] = "".join(hit["highlight"]["address"])
+                else:
+                    hit_dict["address"] = hit["_source"]["address"]
+
+                hit_dict["meet_time"] = hit["_source"]["meet_time"]
+                hit_dict["url"] = hit["_source"]["url"]
+                # hit_dict["organisers"] = hit["_source"]["organisers"]
+                hit_dict["plan_c_count"] = hit["_source"]["plan_c_count"]
+                hit_dict["score"] = hit["_score"]
+
+                hit_list.append(hit_dict)
+
+            return render(request, "jobfairs_result.html", {"all_hits": hit_list, "key_words": key_words,
+                                                           "page": page, "total_nums": total_nums,
+                                                           "page_nums": page_nums, "last_seconds": last_seconds,
+                                                           "info_nums": self.get_info_nums()})
         else:
             response = client.search(
                 index="jobs",
@@ -255,6 +314,16 @@ class SearchView(View):
             results.append(cursor.fetchone()[0])
         except:
             results = [0, 0, 0]
-
+        cursor.close()
         return results
 
+
+class AdminView(View):
+    def get(self, request):
+        return render(request, "admin.html", {"is_disabled": ""})
+
+class CrawlView(View):
+    def get(self, request):
+        # run_spider()
+        return render(request, "admin.html", {"is_disabled": 'disabled="disabled"',
+                                              "crawling": 1})
