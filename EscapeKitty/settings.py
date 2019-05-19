@@ -25,7 +25,7 @@ SECRET_KEY = 's-ahvv=d-7+di-+i$x(f%h-2%d-+jaogx(aw8ei1^_h+6=_&e7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Kitty.apps.KittyConfig',
+    'django_echarts',
 ]
 
 MIDDLEWARE = [
@@ -124,3 +125,12 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
+
+DJANGO_ECHARTS = {
+    'echarts_version': '4.0.4',
+    'lib_js_host': 'cdnjs',
+    'local_host': '{STATIC_URL}echarts',
+    'js_urls': {
+        'wordcloud': 'echarts-wordcloud.min'
+    }
+}

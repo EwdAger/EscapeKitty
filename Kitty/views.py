@@ -8,6 +8,9 @@ from datetime import datetime
 import MySQLdb
 import MySQLdb.cursors
 from Nerds.main import run_spider
+from pyecharts import Bar, Pie
+from django_echarts.views.backend import EChartsBackendView
+from .charts import charts
 
 db = MySQLdb.connect("localhost", "root", "33Miss77###", "hnjy", charset='utf8')
 client = Elasticsearch(hosts=["127.0.0.1"])
@@ -322,8 +325,22 @@ class AdminView(View):
     def get(self, request):
         return render(request, "admin.html", {"is_disabled": ""})
 
+
 class CrawlView(View):
     def get(self, request):
         # run_spider()
         return render(request, "admin.html", {"is_disabled": 'disabled="disabled"',
                                               "crawling": 1})
+
+
+class EChartsTemplate(EChartsBackendView):
+    template_name = 'charts.html'
+
+    def get_echarts_instance(self, *args, **kwargs):
+        name = self.request.GET.get('name', 'bar')
+        return charts(name)
+
+
+if __name__ == "__main__":
+    a = EChartsTemplate()
+    print(a.get_city_nums())

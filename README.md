@@ -34,3 +34,7 @@ for i in range(2):
 **~~简陋的~~更新页**
 
 ![admin](https://github.com/EwdAger/EscapeKitty/blob/master/readme_img/admin.png)
+
+新增图表页
+
+![chart](https://github.com/EwdAger/EscapeKitty/blob/master/readme_img/1.png)
