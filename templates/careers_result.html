@@ -104,7 +104,7 @@
                                     <div>
                                         所属行业: {{ hit.industry_category }}
                                     </div>
-                                <div class="btn btn-primary" > {{ hit.school_name }} {{ hit.address }} {{ hit.meet_time }}</div>
+                                <div class="btn btn-primary" > {% autoescape off %}{{ hit.school_name }} {{ hit.address }} {{ hit.meet_time }}{% endautoescape %}</div>
                                 <div class="{{ hit.css }}">{{ hit.c_value }}</div>
                                 </div>
 
@@ -142,7 +142,7 @@
 </div><!--End of bd-->
 </div>
 
-<div id="foot">Copyright &copy;projectsedu.com 版权所有 E-mail:admin@projectsedu.com</div>
+<div id="foot">Copyright &copy;EwdAger 版权所有  E-mail:i@gvoidy.cn</div>
 </body>
 <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/global.js' %}"></script>

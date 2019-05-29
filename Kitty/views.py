@@ -296,7 +296,11 @@ class SearchView(View):
                     hit_dict["c_value"] = "未收录工作时长"
                 cursor.close()
                 hit_list.append(hit_dict)
-
+            try:
+                if not is_practice:
+                    is_practice = "正式岗位"
+            except:
+                is_practice = "正式岗位"
             return render(request, "jobs_result.html", {"all_hits": hit_list, "key_words": key_words,
                                                    "page": page, "total_nums": total_nums,
                                                    "page_nums": page_nums, "last_seconds": last_seconds,

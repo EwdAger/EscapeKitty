@@ -73,6 +73,7 @@ def get_timelist():
 
 
 def get_wordcloud():
+    data = {"计算机类": 0}
     major = []
     nums = []
     cursor = db.cursor()
@@ -81,16 +82,26 @@ def get_wordcloud():
             FROM hnust_jobs 
             GROUP BY about_major
             ORDER BY nums
-             DESC LIMIT 100
+             DESC LIMIT 140
         """
     try:
         cursor.execute(sql)
         result = cursor.fetchall()
         for i in result:
-            if i[0] == "不限专业":
+            if "不限" in i[0]:
                 continue
-            major.append(i[0])
-            nums.append(int(i[1]))
+            if "计算" in i[0] or "软件" in i[0]:
+                data["计算机类"] += i[1]
+            else:
+                buff = i[0].split("，")
+                for j in buff:
+                    if j not in data:
+                        data[j] = i[1]
+                    else:
+                        data[j] += i[1]
+        for k, v in data.items():
+            major.append(k)
+            nums.append(v)
     except:
         pass
     cursor.close()
